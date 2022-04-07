@@ -6,6 +6,6 @@
 Вы можете всегда взять материалы из моего репозитория
 
 # Какие проекты уже готовы:
-+ [Project 4](https://github.com/Dubrovsky18/OS_system/tree/master/project_4)
-+ [Project 5](https://github.com/Dubrovsky18/OS_system/tree/master/project_5)
++ [Project 4](https://github.com/Dubrovsky18/OS_system/tree/main/project_4)
++ [Project 5](https://github.com/Dubrovsky18/OS_system/tree/main/project_5)
 
