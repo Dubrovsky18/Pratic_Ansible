@@ -1,0 +1,4 @@
+---
+# vars file for web_nginx
+keepalived_ip_nonlocal_bind : '1'
+nginx_listen_port: 8080
