@@ -8,7 +8,7 @@
 - [X] Установка и настройка всего ПО должна быть обеспечена Ansible-сценарием.
 - [X] Все файлы по этому заданию выложить в Github и написать ReadMe со скринами работоспособности и инструкцию по запуску вашего Ansible-сценария
 
-<!-- ![Alt text](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/task.jpg "Task") -->
+![Alt text](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/task.jpg "Task")
 
 Решение задачи
 ---------------------------
@@ -33,8 +33,8 @@
 \
 --------------------------
 
-![Alt text](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/web1.png "сайт на web1")
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/web2.png "Сайт на web2")
+![Alt text](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/web1.png "сайт на web1")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/web2.png "Сайт на web2")
 --------------------------
 
 + Забиваем адрес - Virtual IP([Немного о Keepalived и VI](https://www.servers.ru/knowledge/linux-administration/how-to-setup-floating-ip-using-keepalived)). Если при каждом обновлении он показывает сайт web1, а потом web2, поочередно, следовательно мы сделали все правильно.
@@ -42,8 +42,8 @@
 \
 -------------------------
 
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/haproxy_web1.png "Web1 in haproxy")
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/haproxy_web2.png "Web2 in haproxy")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/haproxy_web1.png "Web1 in haproxy")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/haproxy_web2.png "Web2 in haproxy")
 ---------------------------
 
 
@@ -54,8 +54,8 @@
 
 \
 ---------------------
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/failover/haproxy1_web1.png "Отказоустойчивасть. Web1 - Основа на haproxy1")
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/failover/haproxy1_web2.png "Отказоустойчивасть. Web2 - Основа на haproxy1")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/failover/haproxy1_web1.png "Отказоустойчивасть. Web1 - Основа на haproxy1")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/failover/haproxy1_web2.png "Отказоустойчивасть. Web2 - Основа на haproxy1")
 ---------------------------
 
 
@@ -64,6 +64,6 @@
 
 \
 ---------------------
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/failover/haproxy2_web1.png "Отказоустойчивасть. Web1 - Основа на haproxy2")
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_5/report/failover/haproxy2_web2.png "Отказоустойчивасть. Web2 - Основа на haproxy2")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/failover/haproxy2_web1.png "Отказоустойчивасть. Web1 - Основа на haproxy2")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/failover/haproxy2_web2.png "Отказоустойчивасть. Web2 - Основа на haproxy2")
 ---------------------------
