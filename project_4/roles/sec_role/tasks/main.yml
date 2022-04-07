@@ -1,0 +1,28 @@
+---
+
+- name: Install EPEL Repo package from standard repo
+  yum:
+    name: epel-release
+    state: present
+
+- name: install nginx from repo
+  yum:
+    name: 
+      - nginx
+    state: latest
+
+- name: Copy file with owner and permissions
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  tags:
+    - nginx-conf
+
+- name: Make sure a service unit is running
+  ansible.builtin.systemd:
+    state: restarted
+    name: nginx
+    enabled: yes
+  tags:
+    - nginx-conf
+  
