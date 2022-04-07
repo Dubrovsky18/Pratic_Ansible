@@ -1,0 +1,9 @@
+- name: Nginx
+  hosts: webservers
+  roles:
+    - web_nginx
+
+- name: Nginx
+  hosts: balance
+  roles:
+    - sec_role
