@@ -1,0 +1,60 @@
+---
+- name: Install the haproxy from a remote repo
+  yum:
+    name:
+    - haproxy
+    state: latest
+  tags: without-haproxy
+ 
+- name: config Haproxy
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  notify: 
+    - restart haproxy
+  tags: haproxy-cfg
+
+- name: Make sure a service haproxy is running
+  ansible.builtin.systemd:
+    state: restarted
+    name: haproxy
+    enabled: yes
+  tags: reboot-haproxy
+
+- name: Install the keepalived from a remote repo
+  yum:
+    name:
+    - keepalived
+    state: latest
+  tags: without-keep
+
+- name: allow binding non-local IPv4
+  sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: "{{ keepalived_ip_nonlocal_bind }}"	
+    reload: true
+    state: present
+  when: keepalived_ip_nonlocal_bind
+  tags: sys
+    
+- name: config keepalive
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+  notify: 
+    - restart keepalived
+  with_items: "{{ groups['balance'] }}"
+  tags: keep
+
+- name: Make sure a service keepalived is running
+  ansible.builtin.systemd:
+    state: restarted
+    name: keepalived
+    enabled: yes
+  tags:
+    - restart-keep
+
+
+
+    
+    
