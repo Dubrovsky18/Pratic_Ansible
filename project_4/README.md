@@ -6,12 +6,12 @@
 - [X] На сервере rrobin Nginx должен обеспечить балансировку нагрузки серверов web1 и web2 в режиме round-robin. Вес каждого сервера одинаковый.
 - [X] Установка и настройка всего ПО должна быть обеспечена Ansible-сценарием.
 - [x] Все файлы по этому заданию выложить в Github и написать ReadMe со скринами работоспособности и инструкцию по запуску вашего Ansible-сценария
-![Alt text](https://github.com/Dubrovsky18/OS_system/blob/master/project_4/report/web.jpg "Task")
+![Alt text](https://github.com/Dubrovsky18/OS_system/blob/main/project_4/report/web.jpg "Task")
 
 Решение задачи
 ---------------------------
 + Скачаем все необходимые данные. Открывает Vagrantfile и ставим нужные machine и ip, который принадлежит каждому серверу.
-![Alt text](https://github.com/Dubrovsky18/OS_system/blob/master/project_4/report/vagrantfile.png "Vagrantfile")
+![Alt text](https://github.com/Dubrovsky18/OS_system/blob/main/project_4/report/vagrantfile.png "Vagrantfile")
 + Открываем и редактируем inventory-чтобы ansible мог управлять нашими хостами.
 + Открываем и редактириуем ansible.cfg-чтобы указать наш inventory файл со всеми нужными нам параметрами(более подробно [ansible documention](https://docs.ansible.com/ansible/2.6/reference_appendices/config.html)
 + Создаем папку(roles) где будут хранится все playbooks и конифуграции для наших webservers и backend-server.
@@ -29,8 +29,8 @@
 Pictures
 --------------------------
 
-![Alt text](https://github.com/Dubrovsky18/OS_system/blob/master/project_4/report/web1.png "сайт на web1")
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_4/report/web2.png "Сайт на web2")
+![Alt text](https://github.com/Dubrovsky18/OS_system/blob/main/project_4/report/web1.png "сайт на web1")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_4/report/web2.png "Сайт на web2")
 --------------------------
 
 + Забиваем адрес - backend-server. Если при каждому обновлении он показывает сайт web1, а потом web2, поочередно, следовательно мы сделали все правильно, и можем отдохнуть.
@@ -38,6 +38,6 @@ Pictures
 Pictures
 -------------------------
 
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_4/report/rrobin_web1.png "Web1 in rrobin")
-![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/master/project_4/report/rrobin_web2.png "Web2 in rrobin")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_4/report/rrobin_web1.png "Web1 in rrobin")
+![Alt-текст](https://github.com/Dubrovsky18/OS_system/blob/main/project_4/report/rrobin_web2.png "Web2 in rrobin")
 ---------------------------
