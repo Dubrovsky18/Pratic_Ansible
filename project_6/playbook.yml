@@ -1,0 +1,9 @@
+- name: postgresql-1
+  hosts: pgsql1
+  roles:
+    - roles/pgsql1
+- name: postgresql-2
+  hosts: pgsql2
+  roles:
+    - roles/pgsql2
+
