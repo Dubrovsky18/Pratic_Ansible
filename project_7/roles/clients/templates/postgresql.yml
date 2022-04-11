@@ -1,0 +1,91 @@
+scope: sirius
+name: {{ inventory_hostname }}
+
+
+restapi:
+  listen: 0.0.0.0:{{ connect_port }}
+  connect_address: {{ ansible_host }}:{{ connect_port }}
+  authentication:
+    username: patroniapi
+    password: Chiphe3x
+
+consul:
+  host: "127.0.0.1:8500"
+
+log:
+  dir: /var/log/patroni
+  file_num: 30
+  file_size: 104857600
+
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout : 10
+    maximum_lag_on_failover: 1048576
+    synchronous_mode: true
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        wal_keep_segments: 1875
+        max_connections: 100
+        max_prepared_transactions: 100
+  initdb:
+    - encoding: UTF8
+    - data-checksums
+    - waldir: /pgsql/pg_wal/14
+
+  pg_hba:
+    - host replication replicator 0.0.0.0/0 md5
+    - host all all 0.0.0.0/0 md5
+
+
+postgresql:
+#  callbacks:
+#    on_role_change: '/opt/app/patroni/bin/restart_app.sh'
+#    on_stop: '/opt/app/patroni/bin/restart_app.sh > /pgsql/1.txt'
+  listen: 0.0.0.0:5432
+  connect_address: {{ ansible_host }}:{{ postgresql_connect_port }}
+  data_dir: /pgsql/pg_data/14
+  bin_dir: /usr/pgsql-14/bin
+  basebackup:
+    - waldir: /pgsql/pg_wal/14
+  authentication:
+    replication:
+      username: replicator
+      password: Agh8ohco
+    superuser:
+      username: postgres
+      password: Uoquied2
+  parameters:
+    log_destination: 'stderr'
+    log_directory: '/var/log/postgres'
+    log_filename: 'postgresql.log'
+    log_timezone: 'Europe/Moscow'
+    log_line_prefix: '%t [%p]: [%l-1] user=%u,db=%d,app=%a,client=%h '
+    log_truncate_on_rotation: 'on'
+    log_rotation_age: 0
+    log_rotation_size: 0
+    logging_collector: 'on'
+    log_lock_waits: 'on'
+    log_checkpoints: 'on'
+    log_replication_commands: 'on'
+    log_temp_files: 0
+    log_min_duration_statement: '30s'
+    log_autovacuum_min_duration: 0
+    log_statement: 'ddl'
+    log_error_verbosity: 'default'
+    archive_mode: 'on'
+#    archive_command: "/opt/pgpro/std-13/bin/pg_probackup archive-push -B /pgsql/pg_backup --instance=ckm --wal-file-path=%p --wal-file-name=%f --compress --batch-size=4 -j 2"
+    archive_command: "/bin/true"
+    archive_timeout: 1800s
+#  recovery_conf:
+#    restore_command: "/opt/pgpro/std-13/bin/pg_probackup archive-get -B /pgsql/pg_backup --instance=ckm --wal-file-path=%p --wal-file-name=%f"
+  create_replica_methods:
+    - basebackup
+
+watchdog:
+  device: /dev/watchdog
+  mode: required
+  safety_margin: 5

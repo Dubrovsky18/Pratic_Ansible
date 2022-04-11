@@ -1,0 +1,83 @@
+---
+#- debug:
+#    var: consul_servers
+
+#- name: Install EPEL Repo package from standard repo
+#  yum:
+#    name: epel-release
+#    state: present
+
+- name: Check consul binary exists
+  stat:
+    path: /usr/bin/consul
+  register: consul_bin
+  tags: consul_bin
+
+- name: Install consul
+  block:
+    - name: Add hashicorp repository
+      shell: yum-config-manager --add-repo=https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+      args:
+        creates: /etc/yum.repos.d/hashicorp.repo
+
+    - name: Install consul rpm
+      yum:
+        name: consul
+        state: present
+
+  rescue:
+    - name: Copy consul rpm
+      copy:
+        src: consul-1.8.4-4.x86_64.rpm
+        dest: /tmp
+
+    - name: Install consul rpm
+      yum:
+        name: /tmp/consul-1.8.4-4.x86_64.rpm
+        state: present
+
+  when: not consul_bin.stat.exists
+  tags: consul_bin
+
+- name: Create consul log directory
+  file:
+    path: /var/log/consul
+    state: directory
+    owner: consul
+    group: consul
+    mode: '0750'
+  tags: consul_bin
+
+- name: Stop and disable firewalld
+  systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+    masked: yes
+  ignore_errors: true
+
+#- name: Install libselinux-python  package
+#  yum:
+#    name:
+#      - libselinux-python
+#    state: present
+
+- name: Enable consul autocompletion
+  lineinfile:
+    path: /root/.bashrc
+    regexp: '^complete .*consul'
+    line: complete -C /bin/consul consul
+
+######### Tasks for gossip encryption key
+- name: Include gossip encrypt tasks
+  include_tasks: encrypt_gossip.yml
+
+- name: Copy consul general configuration
+  template: src=consul.hcl.j2 dest=/etc/consul.d/consul.hcl owner=consul group=consul mode=0640
+  notify: restart consul
+
+- name: Copy consul server configuration
+  template: src=server.hcl.j2 dest=/etc/consul.d/server.hcl owner=consul group=consul mode=0640
+  when: consul_role == 'server'
+  notify: restart consul
+  tags: server_hcl

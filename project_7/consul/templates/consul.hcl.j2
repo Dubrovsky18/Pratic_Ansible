@@ -1,0 +1,11 @@
+datacenter = "{{ dc_name }}"
+node_name = "{{ inventory_hostname }}"
+data_dir = "/opt/consul"
+encrypt = "{{ consul_raw_key }}"
+log_level = "INFO"
+log_file = "/var/log/consul/"
+log_rotate_max_files = 30
+log_rotate_bytes = 104857600
+retry_join = {{ consul_servers | list | to_json }}
+bind_addr = "{{ vars['ansible_' + consul_iface].ipv4.address }}"
+disable_update_check = true
