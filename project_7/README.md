@@ -34,7 +34,7 @@ ansible-playbook playbook.yml
     ```
         watch patronictl list
     ```
-    [Alter text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/lead2_sync1.png "Testing")
+    ![Alt-text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/lead2_sync1.png "Testing")
     - После того как мы увидили такую картину, можем прописать
     ```
     # меняем нашего лидера
@@ -43,7 +43,7 @@ ansible-playbook playbook.yml
     # смотрим и ждем, когда поменяется лидер
     watch patronictl list
     ```
-[Alter text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/stop2_run1.png "Testing")
-[Alter text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/lead1_rep2.png "Testing")
-[Alter text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/lead1_sync2.png "Testing")
+![Alt-text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/stop2_run1.png "Testing")
+![Alt-text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/lead1_rep2.png "Testing")
+![Alt-text](https://github.com/Dubrovsky18/OS_system/blob/main/project_7/report/lead1_sync2.png "Testing")
 + Если у нас все получилось, то мы молодцы и можем пойти попить чаю
