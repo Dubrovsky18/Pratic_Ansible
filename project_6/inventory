@@ -1,4 +1,0 @@
-[pgsql1]
-pg1 ansible_host=192.168.14.111 p=100
-[pgsql2]
-pg2 ansible_host=192.168.14.112 p=101
