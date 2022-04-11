@@ -1,0 +1,13 @@
+---
+dc_name: "dc1"
+consul_ansible_group: "consul"
+consul_role: "client"
+consul_servers: "\
+  {% set _consul_servers = [] %}\
+  {% for host in groups[consul_ansible_group] %}\
+    {% if (hostvars[host]['consul_role'] == 'server') %}\
+      {% if _consul_servers.append(host) %}{% endif %}\
+    {% endif %}\
+  {% endfor %}\
+  {{ _consul_servers }}"
+consul_iface: "eth0"
