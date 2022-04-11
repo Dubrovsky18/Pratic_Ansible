@@ -1,0 +1,8 @@
+- name: postgresql-1
+  hosts: 
+    - 192.168.11.20
+    - 192.168.11.21
+  roles:
+    - roles/clients
+ 
+

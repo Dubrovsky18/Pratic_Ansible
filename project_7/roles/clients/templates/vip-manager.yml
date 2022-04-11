@@ -1,0 +1,19 @@
+interval: 1000
+
+trigger-key: "/service/sirius/leader"
+trigger-value: "{{ inventory_hostname }}"
+
+ip: 192.168.11.100
+netmask: 24
+interface: enp0s8
+hosting-type: basic
+
+dcs-type: consul
+
+dcs-endpoints:
+  - http://127.0.0.1:8500
+
+consul-token: "{{ consul_token }}"
+retry-num: 2
+retry-after: 250
+verbose: false 
