@@ -1,0 +1,6 @@
+# handlers file for balance
+- name: restart postgres
+  service: name=postgresql state=restarted
+
+- name: reboot system
+  reboot:
