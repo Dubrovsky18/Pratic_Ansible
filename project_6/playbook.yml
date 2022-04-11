@@ -1,0 +1,14 @@
+- name : Play to setup haproxy2
+  hosts: hp2
+  roles:
+    - roles/haproxy2
+
+- name: Play to setup the haproxy1
+  hosts: hp1
+  roles:
+    - roles/haproxy1
+    
+
+      
+      
+ 
