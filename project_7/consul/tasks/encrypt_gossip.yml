@@ -1,0 +1,73 @@
+---
+- name: Read gossip encryption key from previously boostrapped server
+  shell: 'cat /etc/consul.d/consul.hcl | grep "^encrypt = " | sed -E ''s/encrypt = "(.+)",?/\1/'' | sed ''s/^ *//;s/ *$//'''
+  register: consul_key_read
+  changed_when: false
+
+- name: Set fact gossip encryption key from existing configuration
+  set_fact:
+    consul_raw_key: "{{ consul_key_read.stdout }}"
+  when: consul_key_read.stdout != ''
+
+- name: Write gossip encryption key locally for use with new servers
+  copy:
+    content: "{{ consul_raw_key }}"
+    dest: '/tmp/consul_raw.key'
+  become: false
+  vars:
+    ansible_become: false
+  no_log: true
+  delegate_to: localhost
+  changed_when: false
+  when: consul_raw_key is defined
+
+- name: Check consul local raw key exists
+  stat:
+    path: /tmp/consul_raw.key
+  become: false
+  register: consul_local_key
+  delegate_to: localhost
+  run_once: true
+
+- name: Read gossip encryption key for servers that require it
+  set_fact:
+    consul_raw_key: "{{ lookup('file', '/tmp/consul_raw.key') }}"
+  no_log: true
+  when:
+    - consul_local_key.stat.exists
+    - consul_raw_key is not defined
+
+- block:
+    - name: Generate gossip encryption key
+      shell: "/bin/consul keygen"
+      register: consul_keygen
+      run_once: true
+
+    - name: Write key locally to share with other nodes
+      copy:
+        content: "{{ consul_keygen.stdout }}"
+        dest: '/tmp/consul_raw.key'
+      become: false
+      vars:
+        ansible_become: false
+      delegate_to: localhost
+      run_once: true
+
+    - name: Reread new gossip encryption key
+      set_fact:
+        consul_raw_key: "{{ lookup('file', '/tmp/consul_raw.key') }}"
+
+  no_log: true
+  when:
+    - not consul_local_key.stat.exists
+
+- name: Delete gossip encryption key file
+  file:
+    path: '/tmp/consul_raw.key'
+    state: absent
+  become: false
+  vars:
+    ansible_become: false
+  run_once: true
+  delegate_to: localhost
+  changed_when: false

@@ -1,0 +1,10 @@
+{
+    "datacenter": "{{ datacenter }}",
+    "data_dir": "/opt/consul/",
+    "log_level": "INFO",
+    "retry_join": [ "{{ join_address }}" ] ,
+    "client_addr": "0.0.0.0",
+    "encrypt": "{{ secret_key }}",
+    "bind_addr": "{{ hostvars[ansible_host]['ansible_default_ipv4']['address'] }}",
+    "enable_local_script_checks": true
+}

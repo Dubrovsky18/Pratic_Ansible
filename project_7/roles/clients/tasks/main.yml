@@ -1,0 +1,174 @@
+
+
+#--------------------на обоих серверах
+- name: Install pgsql
+  yum: 
+    name:
+      - https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+      - epel-release
+    state: installed
+  tags: skip-install
+
+
+- name: Install postgresql14
+  yum:
+    name: postgresql14-server
+    state: installed
+  tags: skip-install
+
+
+- name: install from local
+  shell: "yum -y localinstall /vagrant/*rpm"
+  tags: skip-install
+
+- name: mkdir directory for mount disks
+  file: 
+    path: /pgsql
+    state: directory
+    owner: postgres
+    group: postgres
+
+- name: create disks pgdata
+  community.general.lvg:
+    vg: pgdata
+    pvs: /dev/sdb
+  tags: create-disk
+
+- name: mount for FREE - pgdata
+  community.general.lvol:
+    vg: pgdata
+    lv: pgdata
+    size: 100%FREE
+  tags: create-disk
+
+- name: create disks pgwal
+  community.general.lvg:
+    vg: pgwal
+    pvs: /dev/sdc
+  tags: create-disk
+
+- name: mount for FREE - pgwal
+  community.general.lvol:
+    vg: pgwal
+    lv: pgwal
+    size: 100%FREE
+  tags: create-disk
+
+- name: mkfs pgdata
+  community.general.filesystem:
+    fstype: xfs
+    dev: /dev/mapper/pgdata-pgdata
+  tags: create-disk
+
+- name: mkfs pgwal
+  community.general.filesystem:
+    fstype: xfs
+    dev: /dev/mapper/pgwal-pgwal
+  tags: create-disk
+
+- name: mkdir directory
+  file: 
+    path: /pgsql/pg_data
+    state: directory
+    owner: postgres
+    group: postgres
+  tags: create-disk
+
+- name: mkdir directory
+  file: 
+    path: /pgsql/pg_wal
+    state: directory
+    owner: postgres
+    group: postgres
+  tags: create-disk
+
+- name: chown /pgsql/ for postgres
+  ansible.builtin.file:
+    path: /pgsql/
+    state: directory
+    recurse: yes
+    owner: postgres
+    group: postgres
+  tags: create-disk
+
+
+#----------------------------------- Важно правильно разделить файлы
+
+- name: config postgresql.yml
+  template:
+    src: postgresql.yml
+    dest: /opt/app/patroni/etc/postgresql.yml
+    owner: postgres
+    group: postgres
+  tags: patroni-temp
+
+ 
+#---------------------------------------------------
+
+- name: mkdir directory patroni
+  file: 
+    path: /var/log/patroni
+    state: directory
+    owner: postgres
+    group: postgres 
+  tags: mkdir
+
+
+- name: mkdir directory postgres
+  file: 
+    path: /var/log/postgres
+    state: directory
+    owner: postgres
+    group: postgres
+  tags: mkdir 
+
+- name: environment
+  template:
+    src: environment
+    dest: /etc/environment
+    owner: root
+    owner: root
+  tags: enviroment
+
+- name: Start patroni-watchdog
+  ansible.builtin.systemd:
+    name: patroni-watchdog.service
+    state: started
+    enabled: yes
+
+
+- name: Pause for 20 seconds between patroni and watchdog
+  pause:
+    seconds: 20
+  
+- name: Start patroni
+  ansible.builtin.systemd:
+    name: patroni
+    state: started
+    enabled: yes
+
+- name: Read gossip encryption key from previously boostrapped server
+  shell: 'cat /etc/consul.d/consul.hcl | grep "^encrypt = " | sed -E ''s/encrypt = "(.+)",?/\1/'' | sed ''s/^ *//;s/ *$//'''
+  register: consul_key_read
+  changed_when: false
+  tags: vip
+
+- name: Set fact gossip encryption key from existing configuration
+  set_fact:
+    consul_token: "{{ consul_key_read.stdout }}"
+  when: consul_key_read.stdout != ''
+  tags: vip
+
+- name: VIP-manager templete
+  template:
+    src: vip-manager.yml
+    dest: /etc/default/vip-manager.yml
+  tags: vip
+
+- name: Start vip
+  ansible.builtin.systemd:
+    name: vip-manager.service
+    state: started
+    enabled: yes
+  tags: vip
+
