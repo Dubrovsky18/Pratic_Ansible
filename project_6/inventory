@@ -1,4 +1,4 @@
-[pgsql1]
-pg1 ansible_host=192.168.14.111 p=100
-[pgsql2]
-pg2 ansible_host=192.168.14.112 p=101
+[hp2]
+haproxy2 ansible_host=192.168.14.114 p=101 master=192.168.14.114 replic=192.168.14.113
+[hp1]
+haproxy1 ansible_host=192.168.14.113 p=100 master=192.168.14.113 replic=192.168.14.114

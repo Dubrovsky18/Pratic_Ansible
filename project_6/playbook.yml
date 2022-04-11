@@ -1,9 +1,14 @@
-- name: postgresql-1
-  hosts: pgsql1
+- name : Play to setup haproxy2
+  hosts: hp2
   roles:
-    - roles/pgsql1
-- name: postgresql-2
-  hosts: pgsql2
-  roles:
-    - roles/pgsql2
+    - roles/haproxy2
 
+- name: Play to setup the haproxy1
+  hosts: hp1
+  roles:
+    - roles/haproxy1
+    
+
+      
+      
+ 
