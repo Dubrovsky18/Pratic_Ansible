@@ -8,4 +8,6 @@
 # Какие проекты уже готовы:
 + [Project 4](https://github.com/Dubrovsky18/OS_system/tree/main/project_4)
 + [Project 5](https://github.com/Dubrovsky18/OS_system/tree/main/project_5)
++ [Project 6](https://github.com/Dubrovsky18/OS_system/tree/main/project_6)
++ [Project 7](https://github.com/Dubrovsky18/OS_system/tree/main/project_7)
 
