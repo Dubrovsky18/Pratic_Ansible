@@ -1,8 +1,8 @@
 - name: postgresql-1
   hosts: 
-    - 192.168.11.20
-    - 192.168.11.21
+    - server
   roles:
     - roles/clients
+  tags: pb-host-server
  
 
