@@ -34,6 +34,7 @@
   shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data"
   become_user: postgres
   become: yes
+  tags: init
 
 - name: WAL
   file: path=/wal state=directory owner=postgres group=postgres
@@ -49,29 +50,39 @@
 
 - name: MODE-var/lib/pgsql
   ansible.builtin.file:
-    path: /var/lib/pgsql/14/data/postgresql.conf
+    path: /var/lib/pgsql/14/data
     state: directory
     recurse: yes
     owner: postgres
     group: postgres
 
-- name: Pg_hba-config
-  postgresql_pg_hba:
+# - name: Pg_hba-config
+#   postgresql_pg_hba:
+#     dest: /var/lib/pgsql/14/data/pg_hba.conf
+#     contype: host
+#     users: replication
+#     source: 192.168.14.0/24
+#     databases: all
+#     method: trust
+#   notify:
+#     - restart postgres 
+
+- name: pg_hba.config
+  file:
+    src: pg_hba.conf
     dest: /var/lib/pgsql/14/data/pg_hba.conf
-    contype: host
-    users: replication
-    source: 192.168.14.0/24
-    databases: all
-    method: trust
   notify:
     - restart postgres 
+  tags: pg_hba
 
+    
 - name: postgres-config
   file:
     src: postgresql.conf
     dest: /var/lib/pgsql/14/data/postgresql.conf
   notify:
     - restart postgres 
+  tags: postgresql
 
 - name: Reload config
   systemd:
