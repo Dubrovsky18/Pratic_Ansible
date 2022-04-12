@@ -71,8 +71,10 @@
   file:
     src: pg_hba.conf
     dest: /var/lib/pgsql/14/data/pg_hba.conf
+    owner: postgres
+    group: postgres
   notify:
-    - restart postgres 
+    - restart postgres
   tags: pg_hba
 
     
@@ -80,6 +82,8 @@
   file:
     src: postgresql.conf
     dest: /var/lib/pgsql/14/data/postgresql.conf
+    owner: postgres
+    group: postgres
   notify:
     - restart postgres 
   tags: postgresql

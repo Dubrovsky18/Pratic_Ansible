@@ -10,10 +10,6 @@
     name: postgresql14-server
   tags: without-postgres
   
-  
-# - name: "Initialize PostgreSQL"
-#   shell: "/usr/pgsql-14/bin/postgresql-14-setup initdb"
-#   tags: init
 
 - name: Postgresql-stop
   systemd:
