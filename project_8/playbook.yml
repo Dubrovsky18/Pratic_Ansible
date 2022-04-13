@@ -1,0 +1,26 @@
+---
+- name: prepare pg1/pg2 postgresql14
+  hosts: 
+    - pgsql
+  roles:
+    - roles/prepare-pgsql
+  tags: pb-prepare-pgsql
+
+- name: playbook for nfs
+  hosts: 
+    - nfs
+  roles: 
+    - roles/nfs
+  tags: pb-nfs
+
+- name: playbook for backup and wal
+  hosts: 
+    - pgsql
+  roles: 
+    - roles/pg
+  tags: pb-pgsql
+
+
+
+ 
+
