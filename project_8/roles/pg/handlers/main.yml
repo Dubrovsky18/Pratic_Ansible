@@ -1,0 +1,8 @@
+- name: restart postgres
+  service: name=postgresql state=restarted
+  tags: restart-pgsql
+# - name: restart keepalived
+#   systemd:
+#     name: keepalived
+#     state: restarted
+#     enabled: yes

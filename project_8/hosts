@@ -1,0 +1,13 @@
+[consul]
+192.168.100.20 ansible_user=root ansible_become=yes consul_role=client consul_iface="enp0s8" inventory_hostname=pg1
+192.168.100.21 ansible_user=root ansible_become=yes consul_role=client consul_iface="enp0s8" inventory_hostname=pg2
+192.168.100.30 ansible_user=root ansible_become=yes consul_role=server consul_iface="enp0s8" inventory_hostname=dcs1
+192.168.100.31 ansible_user=root ansible_become=yes consul_role=server consul_iface="enp0s8" inventory_hostname=dcs2
+192.168.100.32 ansible_user=root ansible_become=yes consul_role=server consul_iface="enp0s8" inventory_hostname=dcs3
+
+[pgsql]
+pg1 ansible_host=192.168.100.20
+pg2 ansible_host=192.168.100.21
+[nfs]
+nfs ansible_host=192.168.100.100
+
