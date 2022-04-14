@@ -10,4 +10,5 @@
 + [Project 5](https://github.com/Dubrovsky18/OS_system/tree/main/project_5)
 + [Project 6](https://github.com/Dubrovsky18/OS_system/tree/main/project_6)
 + [Project 7](https://github.com/Dubrovsky18/OS_system/tree/main/project_7)
++ [Project 8](https://github.com/Dubrovsky18/OS_system/tree/main/project_8)
 
