@@ -5,30 +5,25 @@
     name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
   tags: without-postgres
 
+#   yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+#   yum install -y postgresql14-server
+#   /usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data
+#   mkdir /wal
+#   chown -R postgres.postgres /wal
+#   chown -R postgres.postgres /var/lib/pgsql/14/data
+#   echo 'host replication  all 192.168.14.0/24  trust' >> pg_hba.conf
+#   rm -rf /var/lib/pgsql/14/data/postgresql.conf
+#   printf 'listen_addresses = '*' \n wal_level = 'replica' \n archive_mode = on \n archive_command = 'test ! -f /wal/%f && cp %p /wal/%f'
+#   systemctl start postgresql-14.service
+#   su - root
+#   su - postgres
+#   psql
+#   create role replicant 
+
 - name: Install pgsql
   yum:
     name: postgresql14-server
   tags: without-postgres
-
-
-# - name: install
-#   yum:
-#     name: 
-#       - python-psycorg2
-#       - postgresql
-#       - postgresql-libs
-#       - python3-devel
-#       - postgresql-devel
-#       - python-pip
-#       - python-setuptools
-      # - epel-release
-      # - python34-setuptools
-
-  # easy_install-3.4 pip
-
-# - name: Install psycorg2
-#   pip:
-#     name: psycorg2
 
 - name: Ensure PostgreSQL database is initialized.
   shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data"
@@ -103,6 +98,7 @@
 #     name: replicant
 #     password: replicant
 #     role_attr_flags: LOGIN,REPLICATION
+
 
 
 

@@ -4,13 +4,26 @@
     name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
   tags: without-postgres
 
+#   yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+#   yum install -y postgresql14-server
+#   /usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data
+#   mkdir /wal
+#   chown -R postgres.postgres /wal
+#   chown -R postgres.postgres /var/lib/pgsql/14/data
+#   echo 'host replication  all 192.168.14.0/24  trust' >> pg_hba.conf
+#   rm -rf /var/lib/pgsql/14/data/postgresql.conf
+#   systemctl start postgresql-14.service
+#   su - root
+#   su - postgres
+#   psql
+#   create role replicant replication login encrypted 'postgres';
+#   pg_basebackup -h 192.168.14.114 -D /var/lib/pgsql/14/data -R -P -U replicant -X stream;
 
 - name: Install pgsql
   yum:
     name: postgresql14-server
   tags: without-postgres
   
-
 - name: Postgresql-stop
   systemd:
     name: postgresql-14.service
