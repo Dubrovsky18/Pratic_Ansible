@@ -18,8 +18,6 @@
 #   su - root
 #   su - postgres
 #   psql
-#   create role replicant 
-
 - name: Install pgsql
   yum:
     name: postgresql14-server

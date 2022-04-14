@@ -10,8 +10,6 @@
 #   mkdir /wal
 #   chown -R postgres.postgres /wal
 #   chown -R postgres.postgres /var/lib/pgsql/14/data
-#   echo 'host replication  all 192.168.14.0/24  trust' >> pg_hba.conf
-#   rm -rf /var/lib/pgsql/14/data/postgresql.conf
 #   systemctl start postgresql-14.service
 #   su - root
 #   su - postgres
