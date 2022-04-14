@@ -14,9 +14,14 @@
     state: installed
   tags: skip-install-pgsql14
 
+
 - name: install from local
   shell: "yum -y localinstall /vagrant/*rpm"
-  tags: skip-localinstall
+# - name: install from local
+#   yum:
+#     name: /vagrant/*rpm
+#     state: installed
+#   tags: skip-localinstall
 
 - name: mkdir directory for mount disks
   file: 
@@ -51,7 +56,6 @@
     lv: pgwal
     size: 100%FREE
   tags: mount-FREE-pgwal
-
 
 - name: mkfs pgdata
   community.general.filesystem:
@@ -90,9 +94,6 @@
     group: postgres
   tags: chown-pgsql
 
-
-#----------------------------------- Важно правильно разделить файлы
-
 - name: config postgresql.yml
   template:
     src: postgresql.yml
@@ -100,9 +101,6 @@
     owner: postgres
     group: postgres
   tags: patroni-temp
-
- 
-#---------------------------------------------------
 
 - name: mkdir directory patroni
   file: 
@@ -127,29 +125,30 @@
     dest: /etc/environment
     owner: root
     owner: root
-  notify: start patroni-watchdog
+  notify: 
+  - start patroni-watchdog
   tags: environment
 
-- name: start patroni-watchdog
-  ansible.builtin.systemd:
-    name: patroni-watchdog.service
-    state: started
-    enabled: yes
-  tags: start-watchdog
+# - name: start patroni-watchdog
+#   ansible.builtin.systemd:
+#     name: patroni-watchdog.service
+#     state: started
+#     enabled: yes
+#   tags: start-watchdog
 
 - name: Pause for 20 seconds between patroni and watchdog
   pause:
     seconds: 20
-  notify: start patroni
+  notify: 
+  - start patroni
   tags: sleep-someseconds
 
-
-- name: start patroni
-  ansible.builtin.systemd:
-    name: patroni
-    state: started
-    enabled: yes
-  tags: start-patroni
+# - name: start patroni
+#   ansible.builtin.systemd:
+#     name: patroni
+#     state: started
+#     enabled: yes
+#   tags: start-patroni
   
 - name: Read gossip encryption key from previously boostrapped server
   shell: 'cat /etc/consul.d/consul.hcl | grep "^encrypt = " | sed -E ''s/encrypt = "(.+)",?/\1/'' | sed ''s/^ *//;s/ *$//'''
@@ -167,15 +166,16 @@
   template:
     src: vip-manager.yml
     dest: /etc/default/vip-manager.yml
-  notify: start vip
+  notify: 
+  - start vip
   tags: vip-temp
 
-- name: start vip
-  ansible.builtin.systemd:
-    name: vip-manager.service
-    state: started
-    enabled: yes
-  tags: start-vip
+# - name: start vip
+#   ansible.builtin.systemd:
+#     name: vip-manager.service
+#     state: started
+#     enabled: yes
+#   tags: start-vip
 
 
 #----------------------------------------nfs
@@ -193,5 +193,59 @@
     group: postgres
   tags: mkdir-/pgsql/backup
 
-# - name: echo >> fstab
-#   shell: 'echo "192.168.100.100:/srv/backup /pgsql/pg_backup nfs defaults 0 0" >> /etc/fstab'
+- name: Mount an NFS volume
+  ansible.posix.mount:
+    src: 192.168.100.100:/srv/backup
+    path: /pgsql/pg_backup
+    state: mounted
+    fstype: nfs
+  tags: mount-nfs
+
+- name: rpm-packet
+  yum:
+    name: https://repo.postgrespro.ru/pg_probackup/keys/pg_probackup-repo-centos.noarch.rpm
+  tags: rpm-probackup
+  
+- name: install probackup
+  yum: 
+    name: pg_probackup-14
+    state: installed
+  tags: install probackup
+
+
+#------------------------После проигрывания playbook.yml зайти на сервера, которые указаны и проделать команды. 
+#------------------------Данные команды делаются в ручную от имени postgress
+# 
+#   server:pg1
+#   pg_probackup-14 init -B /pgsql/pg_backup/
+# 
+# 
+#   server:pg1
+#   pg_probackup-14 add-instance -B /pgsql/pg_backup/ -D /pgsql/pg_data/14/ --instance sirius
+# 
+# 
+#   server:pg2 добавить файл /pgsql/pg_backup/backup.sql
+#   в котором будет вписано такие строки
+# BEGIN;
+# CREATE ROLE backup WITH LOGIN;
+# GRANT USAGE ON SCHEMA pg_catalog TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.current_setting(text) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.set_config(text, text, boolean) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_is_in_recovery() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_start_backup(text, boolean, boolean) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_stop_backup(boolean, boolean) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_create_restore_point(text) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_switch_wal() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_last_wal_replay_lsn() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.txid_current() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.txid_current_snapshot() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.txid_snapshot_xmax(txid_snapshot) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_control_checkpoint() TO backup;
+# COMMIT;
+# 
+#   server:pg2 
+#   psql -f /pgsql/pg_backup/backup.sql
+# 
+# 
+#   server:pg2 
+#   pg_probackup-14 backup -B /pgsql/pg_backup --instance sirius -b FULL
