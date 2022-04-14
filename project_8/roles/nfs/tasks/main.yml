@@ -30,11 +30,12 @@
     dev: /dev/mapper/backup-backup
   tags: mkfs-backup
 
-- name: echo >> fstab
-  shell: 'echo "/dev/mapper/backup-backup /srv/backup xfs defaults 0 0" >> /etc/fstab'
-
-- name: mount
-  shell: "mount -av"
+- name: Mount an NFS volume
+  ansible.posix.mount:
+    src: /dev/mapper/backup-backup
+    path: /srv/backup
+    state: mounted
+    fstype: xfs
 
 - name: Add group "postgres" with gid
   ansible.builtin.group:
@@ -54,14 +55,15 @@
     dest: /etc/exports
     owner: root
     group: root
+  notify: start nfs
   tags: exports
 
-- name: start nfs
-  ansible.builtin.systemd:
-    name: nfs
-    state: started
-    enabled: yes
-  tags: start-nfs
+# - name: start nfs
+#   ansible.builtin.systemd:
+#     name: nfs
+#     state: started
+#     enabled: yes
+#   tags: start-nfs
 
 - name: exporting -av
   shell: "exportfs -av"
