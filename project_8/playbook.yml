@@ -13,9 +13,8 @@
     - roles/prepare-pgsql
   tags: pb-prepare-pgsql
 
-
-
-
+#-----после проработки playbook нужно зайти на nfs и запустить systemctl start nfs
+#=====А после выполняем команды, которые находятся в roles/repare-pgsql/tasks/main
 
  
 
