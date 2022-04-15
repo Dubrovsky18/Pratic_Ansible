@@ -41,7 +41,7 @@
   community.general.lvol:
     vg: pgdata
     lv: pgdata
-    size: 100%FREE
+    size: 100%VG
   tags: mount-FREE-pgdata
 
 - name: create disks pgwal
@@ -54,7 +54,7 @@
   community.general.lvol:
     vg: pgwal
     lv: pgwal
-    size: 100%FREE
+    size: 100%VG
   tags: mount-FREE-pgwal
 
 - name: mkfs pgdata
