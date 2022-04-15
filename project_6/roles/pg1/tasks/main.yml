@@ -38,18 +38,11 @@
     owner: postgres
     group: postgres
 
+- name: BaseBackup
+  shell: "pg_basebackup -h 192.168.14.114 -D /var/lib/pgsql/14/data -R -P -U replicant -X stream" 
+  become_user: postgres
+  become: yes
 
-# - name: create ROLE replicant
-#   postgresql_user:
-#     db: postgres
-#     login_unix_socket: /var/run/postgresql
-#     name: replicant
-#     password: replicant
-#     role_attr_flags: LOGIN,REPLICATION
-
-
-# - name: BaseBackup
-#   shell: "pg_basebackup -h 192.168.14.114 -D /var/lib/pgsql/14/data -R -P -U replicant -X stream" 
 
 
 

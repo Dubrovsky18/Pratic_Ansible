@@ -24,15 +24,62 @@
 #   su - root
 #   su - postgres
 #   psql
+
+
+- name: groupinstall
+  shell: 'yum groupinstall -y "Development Tools"'
+
+- name: Install python3-devel
+  yum: 
+    name:
+      - python3-devel
+    state: installed
+  ignore_errors: yes
+
+
+- name: Install postgresql-libs
+  yum: 
+    name:
+      - postgresql-libs
+    state: installed
+  ignore_errors: yes
+
+- name: Install postgresql-devel
+  yum: 
+    name:
+      - postgresql-devel
+    state: installed
+  ignore_errors: yes
+  
+- name: Install postgresql-devel
+  yum: 
+    name:
+      - python2-psycopg2
+      # - python3-psycorg2
+    state: present
+  ignore_errors: yes
+
+
+
 - name: Install pgsql
   yum:
     name: postgresql14-server
-  tags: without-postgres
+  tags: postgres
 
-- name: Ensure PostgreSQL database is initialized.
-  shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data"
+# - name: Ensure PostgreSQL database is initialized.
+#   shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data"
+- name: check initialization db
+  stat:
+    path: "/var/lib/pgsql/14/data/postgresql.conf"
+  register: stat_result
+  tags: check-init
+
+- name: initialize db
+  become_user: postgres
+  shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data/"
   become_user: postgres
   become: yes
+  when: not stat_result.stat.exists
   tags: init
 
 - name: WAL
@@ -56,7 +103,7 @@
     group: postgres
 
 # - name: Pg_hba-config
-#   postgresql_pg_hba:
+#   community.postgresql.postgresql_pg_hba:
 #     dest: /var/lib/pgsql/14/data/pg_hba.conf
 #     contype: host
 #     users: replication
@@ -65,29 +112,45 @@
 #     method: trust
 #   notify:
 #     - restart postgres 
+#   tags: pg_hba
+
+- name: delete file pg_hba.conf
+  ansible.builtin.file:
+    path: /var/lib/pgsql/14/data/pg_hba.conf
+    state: absent
+  tags: delete
+
+- name: delete file postgresql
+  ansible.builtin.file:
+    path: /var/lib/pgsql/14/data/postgresql.conf
+    state: absent
+  tags: delete
+
 
 - name: pg_hba.config
-  file:
+  ansible.builtin.file:
     src: pg_hba.conf
     dest: /var/lib/pgsql/14/data/pg_hba.conf
     owner: postgres
     group: postgres
-  notify:
-    - restart postgres
+    state: touch
+  # notify:
+  #   - restart postgres
   tags: pg_hba
 
     
 - name: postgres-config
-  file:
+  ansible.builtin.file:
     src: postgresql.conf
     dest: /var/lib/pgsql/14/data/postgresql.conf
     owner: postgres
     group: postgres
-  notify:
-    - restart postgres 
+    state: touch
+  # notify:
+  #   - restart postgres 
   tags: postgresql
 
-- name: Reload config
+- name: Start config
   systemd:
     name: postgresql-14.service
     state: restarted
@@ -95,18 +158,14 @@
 
 #community.postgresql
 
-# - name: create ROLE replicant
-#   postgresql_user:
-#     db: postgres
-#     login_unix_socket: /var/run/postgresql
-#     name: replicant
-#     password: replicant
-#     role_attr_flags: LOGIN,REPLICATION
+- name: create ROLE replicant
+  postgresql_user:
+    db: postgres
+    login_unix_socket: /var/run/postgresql
+    name: replicant
+    password: replicant
+    role_attr_flags: LOGIN,REPLICATION
+  become_user: postgres
+  become: yes
+  ignore_errors: yes
 
-
-
-
-
-
-    
-    
