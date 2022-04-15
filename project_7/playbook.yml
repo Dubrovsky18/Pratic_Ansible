@@ -1,4 +1,4 @@
-- name: postgresql-1
+- name: playbook for postgresql14
   hosts: 
     - server
   roles:
