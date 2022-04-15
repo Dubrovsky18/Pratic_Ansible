@@ -1,0 +1,75 @@
+---
+- name: Mount an NFS volume
+  ansible.posix.mount:
+    src: 192.168.100.100:/srv/backup
+    path: /pgsql/pg_backup
+    state: mounted
+    fstype: nfs
+  tags: mount-nfs
+
+- name: rpm-packet
+  yum:
+    name: https://repo.postgrespro.ru/pg_probackup/keys/pg_probackup-repo-centos.noarch.rpm
+  tags: rpm-probackup
+  
+- name: install probackup
+  yum: 
+    name: pg_probackup-14
+    state: installed
+  tags: install probackup
+
+
+#------------------------После проигрывания playbook.yml зайти на сервера, которые указаны и проделать команды. 
+#------------------------Данные команды делаются в ручную от имени postgress
+# 
+#   server:pg1
+
+# - name: "Find out if PostgreSQL is initialized"
+#       ansible.builtin.stat:
+#         path: "/var/lib/pgsql/data/pg_hba.conf"
+#       register: postgres_data
+
+# - name: pg_probackup init
+#   shell: "pg_probackup-14 init -B /pgsql/pg_backup/"
+#   ignore_errors: yes
+#   when: "inventory_hostname == 'pg1'"
+#   tags: first
+  
+# 
+# 
+#   server:pg1
+# - name: add-instance
+#   shell: "pg_probackup-14 add-instance -B /pgsql/pg_backup/ -D /pgsql/pg_data/14/ --instance sirius"
+#   when: "inventory_hostname == 'pg1'"
+#   tags: seconde
+
+# 
+# 
+#   server:pg2 добавить файл /pgsql/pg_backup/backup.sql
+#   в котором будет вписано такие строки
+# BEGIN;
+# CREATE ROLE backup WITH LOGIN;
+# GRANT USAGE ON SCHEMA pg_catalog TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.current_setting(text) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.set_config(text, text, boolean) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_is_in_recovery() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_start_backup(text, boolean, boolean) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_stop_backup(boolean, boolean) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_create_restore_point(text) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_switch_wal() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_last_wal_replay_lsn() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.txid_current() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.txid_current_snapshot() TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.txid_snapshot_xmax(txid_snapshot) TO backup;
+# GRANT EXECUTE ON FUNCTION pg_catalog.pg_control_checkpoint() TO backup;
+# COMMIT;
+# 
+#   server:pg2 
+#   psql -f /pgsql/pg_backup/backup.sql
+# 
+# 
+#   server:pg2 
+# - name: backup FULL
+#   shell: "pg_probackup-14 backup -B /pgsql/pg_backup --instance sirius -b FULL"
+#   when: "inventory_hostname == 'pg2'"
+#   tags: three

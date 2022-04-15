@@ -69,6 +69,22 @@
     dev: /dev/mapper/pgwal-pgwal
   tags: mkfs-pgwal
 
+- name: Mount an NFS volume
+  ansible.posix.mount:
+    src: /dev/mapper/pgwal-pgwal
+    path: /pgsql/pg_wal/14/
+    state: mounted
+    fstype: xfs
+  tags: mount-nfs
+
+- name: Mount an NFS volume
+  ansible.posix.mount:
+    src: /dev/mapper/pgdata-pgdata
+    path: /pgsql/pg_data/14/
+    state: mounted
+    fstype: xfs
+  tags: mount-nfs
+
 - name: mkdir directory
   file: 
     path: /pgsql/pg_data
