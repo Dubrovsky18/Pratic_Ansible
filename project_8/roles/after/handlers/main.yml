@@ -1,0 +1,24 @@
+- name: restart postgres
+  service: name=postgresql state=restarted
+  tags: restart-pgsql
+
+- name: start patroni-watchdog
+  ansible.builtin.systemd:
+    name: patroni-watchdog.service
+    state: started
+    enabled: yes
+  tags: start-watchdog
+
+- name: start patroni
+  ansible.builtin.systemd:
+    name: patroni
+    state: started
+    enabled: yes
+  tags: start-patroni
+
+- name: start vip
+  ansible.builtin.systemd:
+    name: vip-manager.service
+    state: started
+    enabled: yes
+  tags: start-vip
