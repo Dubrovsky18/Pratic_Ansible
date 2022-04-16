@@ -7,6 +7,7 @@
     fstype: nfs
   tags: mount-nfs
 
+
 - name: rpm-packet
   yum:
     name: https://repo.postgrespro.ru/pg_probackup/keys/pg_probackup-repo-centos.noarch.rpm
@@ -24,10 +25,26 @@
 # 
 #   server:pg1
 
-# - name: "Find out if PostgreSQL is initialized"
-#       ansible.builtin.stat:
-#         path: "/var/lib/pgsql/data/pg_hba.conf"
-#       register: postgres_data
+- name: "Find out if PostgreSQL is initialized"
+  ansible.builtin.stat:
+    path: "/var/lib/pgsql/data/pg_hba.conf"
+    register: postgres_data
+  when: "inventory_hostname == 'pg1'"
+  tags: f
+
+- name: check initialization db
+  stat:
+    path: "/var/lib/pgsql/14/data/pg_hba.conf"
+  register: stat_result
+  tags: check-init
+
+- name: initialize db
+  become_user: postgres
+  shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data/"
+  become_user: postgres
+  become: yes
+  when: not stat_result.stat.exists
+  tags: init
 
 # - name: pg_probackup init
 #   shell: "pg_probackup-14 init -B /pgsql/pg_backup/"
@@ -38,10 +55,10 @@
 # 
 # 
 #   server:pg1
-# - name: add-instance
-#   shell: "pg_probackup-14 add-instance -B /pgsql/pg_backup/ -D /pgsql/pg_data/14/ --instance sirius"
-#   when: "inventory_hostname == 'pg1'"
-#   tags: seconde
+- name: add-instance
+  shell: "pg_probackup-14 add-instance -B /pgsql/pg_backup/ -D /pgsql/pg_data/14/ --instance sirius"
+  when: "inventory_hostname == 'pg1'"
+  tags: seconde
 
 # 
 # 
