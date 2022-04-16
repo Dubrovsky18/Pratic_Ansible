@@ -7,17 +7,21 @@
     fstype: nfs
   tags: mount-nfs
 
-
+# - name: rpm-packet
+#   shell: "rpm -ivh https://repo.postgrespro.ru/pg_probackup/keys/pg_probackup-repo-centos.noarch.rpm"
+#   tags: rpm-probackup
+  
 - name: rpm-packet
   yum:
     name: https://repo.postgrespro.ru/pg_probackup/keys/pg_probackup-repo-centos.noarch.rpm
   tags: rpm-probackup
-  
+
+
 - name: install probackup
   yum: 
     name: pg_probackup-14
-    state: installed
-  tags: install probackup
+    state: present
+  tags: install-probackup
 
 
 #------------------------После проигрывания playbook.yml зайти на сервера, которые указаны и проделать команды. 
@@ -25,25 +29,19 @@
 # 
 #   server:pg1
 
-- name: "Find out if PostgreSQL is initialized"
-  ansible.builtin.stat:
-    path: "/var/lib/pgsql/data/pg_hba.conf"
-    register: postgres_data
-  when: "inventory_hostname == 'pg1'"
-  tags: f
-
 - name: check initialization db
   stat:
     path: "/var/lib/pgsql/14/data/pg_hba.conf"
   register: stat_result
+  when: "inventory_hostname == 'pg1'"
   tags: check-init
 
 - name: initialize db
   become_user: postgres
   shell: "/usr/pgsql-14/bin/initdb -D /var/lib/pgsql/14/data/"
-  become_user: postgres
-  become: yes
-  when: not stat_result.stat.exists
+  when: 
+    - not stat_result.stat.exists
+    - "inventory_hostname == 'pg1'"
   tags: init
 
 # - name: pg_probackup init
@@ -51,9 +49,6 @@
 #   ignore_errors: yes
 #   when: "inventory_hostname == 'pg1'"
 #   tags: first
-  
-# 
-# 
 #   server:pg1
 - name: add-instance
   shell: "pg_probackup-14 add-instance -B /pgsql/pg_backup/ -D /pgsql/pg_data/14/ --instance sirius"
@@ -83,10 +78,10 @@
 # 
 #   server:pg2 
 #   psql -f /pgsql/pg_backup/backup.sql
-# 
-# 
-#   server:pg2 
-# - name: backup FULL
-#   shell: "pg_probackup-14 backup -B /pgsql/pg_backup --instance sirius -b FULL"
-#   when: "inventory_hostname == 'pg2'"
-#   tags: three
+
+
+  # server:pg2 
+- name: backup FULL
+  shell: "pg_probackup-14 backup -B /pgsql/pg_backup --instance sirius -b FULL"
+  when: "inventory_hostname == 'pg2'"
+  tags: three
