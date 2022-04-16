@@ -75,7 +75,7 @@
     path: /pgsql/pg_wal/14/
     state: mounted
     fstype: xfs
-  tags: mount-nfs
+  tags: mount-pgwal
 
 - name: Mount an NFS volume
   ansible.posix.mount:
@@ -83,7 +83,7 @@
     path: /pgsql/pg_data/14/
     state: mounted
     fstype: xfs
-  tags: mount-nfs
+  tags: mount-pgdata
 
 - name: mkdir directory
   file: 
@@ -183,7 +183,7 @@
     src: vip-manager.yml
     dest: /etc/default/vip-manager.yml
   notify: 
-  - start vip
+    - start vip
   tags: vip-temp
 
 # - name: start vip
@@ -208,25 +208,6 @@
     owner: postgres
     group: postgres
   tags: mkdir-/pgsql/backup
-
-- name: Mount an NFS volume
-  ansible.posix.mount:
-    src: 192.168.100.100:/srv/backup
-    path: /pgsql/pg_backup
-    state: mounted
-    fstype: nfs
-  tags: mount-nfs
-
-- name: rpm-packet
-  yum:
-    name: https://repo.postgrespro.ru/pg_probackup/keys/pg_probackup-repo-centos.noarch.rpm
-  tags: rpm-probackup
-  
-- name: install probackup
-  yum: 
-    name: pg_probackup-14
-    state: installed
-  tags: install probackup
 
 
 #------------------------После проигрывания playbook.yml зайти на сервера, которые указаны и проделать команды. 
