@@ -8,7 +8,7 @@
 - [X] Установка и настройка всего ПО должна быть обеспечена Ansible-сценарием.
 - [X] Все файлы по этому заданию выложить в Github и написать ReadMe со скринами работоспособности и инструкцию по запуску вашего Ansible-сценария
 
-![Alt text](https://github.com/Dubrovsky18/OS_system/blob/main/project_5/report/task.jpg "Task")
+![Alt text](https://github.com/Dubrovsky18/Pratic_Ansible/blob/main/project_5/report/Task.jpg "Task")
 
 Решение задачи
 ---------------------------
